@@ -133,10 +133,14 @@
                                         });
                                         return;
                                     }
+
+                                    //更新缓存
                                     var storage = window.localStorage;
-                                    storage.setItem('userUid', regRes.user_uid);
-                                    storage.setItem('userPhone', regRes.phone);
-                                    storage.setItem('userPassword', regRes.password);
+                                    storage.setItem('userUid', regRes.data.user_uid);
+                                    storage.setItem('userPhone', regRes.data.phone);
+                                    storage.setItem('userPassword', regRes.data.password);
+                                    //更新vuex userInfo
+                                    _this.$store.commit('setUserInfo', regRes.data);
 
                                     _this.$toast({
                                         type: 'success',
@@ -190,10 +194,14 @@
                             });
                             return;
                         }
+
+                        //更新缓存
                         var storage = window.localStorage;
-                        storage.setItem('userUid', res.user_uid);
-                        storage.setItem('userPhone', res.phone);
-                        storage.setItem('userPassword', res.password);
+                        storage.setItem('userUid', res.data.user_uid);
+                        storage.setItem('userPhone', res.data.phone);
+                        storage.setItem('userPassword', res.data.password);
+                        //更新vuex userInfo
+                        _this.$store.commit('setUserInfo', res.data);
 
                         _this.$toast({
                             type: 'success',

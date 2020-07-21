@@ -12,11 +12,9 @@
             <van-field
                     v-model="address"
                     class="count-down-cell"
-                    center
-                    clearable
-                    type="digit"
                     label="小区地址"
-                    placeholder="请输入小区名称">
+                    placeholder="请输入小区地址">
+                placeholder="请输入小区地址">
             </van-field>
 
         </van-cell-group>
@@ -37,6 +35,10 @@
                 community_name: '',
                 address: ''
             }
+        },
+        created() {
+            console.log('useruID',window.localStorage.getItem('userUid'))
+            console.log('store',this.$store.state)
         },
         methods: {
             submit: function () {
@@ -70,7 +72,7 @@
                         console.log('createCommunity res', res);
                         _this.$toast.clear();
                         if (res.code != 200) {
-                            this.$notify({
+                            _this.$notify({
                                 message: res.errMsg,
                                 duration: 2000,
                                 background: '#ff4444'
@@ -92,7 +94,7 @@
                     })
                     .catch((err) => {
                         _this.$toast.clear();
-                        this.$notify({
+                        _this.$notify({
                             message: '服务器异常，请稍后再试',
                             duration: 2000,
                             background: '#ff4444'

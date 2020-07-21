@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div class="community-item">
+        <div class="community-item" v-for="community in communityList" :key="community.community_id">
             <div class="community-content">
-                <div class="community-name">中栋国际</div>
-                <div class="community-address">萧山区北干街道</div>
+                <div class="community-name">{{community.community_name}}</div>
+                <div class="community-address">{{community.address}}</div>
             </div>
         </div>
         <div class="add-community" @click="createCommunity"><img src="../assets/addIcon.svg"></div>
@@ -16,11 +16,32 @@
     export default {
         name: "index",
         data() {
-            return {}
+            return {
+                communityList: []
+            }
         },
         created() {
+            this.getCommunityList();
         },
         methods: {
+            getCommunityList: function () {
+                var _this = this;
+                getCommunityList({
+                    user_uid: _this.$store.state.userUid
+                })
+                    .then((res) => {
+                        console.log('getCommunityList res', res);
+                        _this.communityList = res.data;
+                    })
+                    .catch((err) => {
+                        console.log('getCommunityList err', err);
+                        _this.$notify({
+                            message: err.errMsg,
+                            duration: 2000,
+                            background: '#ff4444'
+                        });
+                    })
+            },
             createCommunity: function () {
                 this.$router.push({
                     name: 'createCommunity'
