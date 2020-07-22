@@ -14,7 +14,6 @@
                     class="count-down-cell"
                     label="小区地址"
                     placeholder="请输入小区地址">
-                placeholder="请输入小区地址">
             </van-field>
 
         </van-cell-group>
@@ -35,10 +34,6 @@
                 community_name: '',
                 address: ''
             }
-        },
-        created() {
-            console.log('useruID',window.localStorage.getItem('userUid'))
-            console.log('store',this.$store.state)
         },
         methods: {
             submit: function () {

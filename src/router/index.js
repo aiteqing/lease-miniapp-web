@@ -3,6 +3,8 @@ import Router from 'vue-router';
 import Login from '../view/login';
 import Index from '../view/index';
 import createCommunity from '../view/community/createCommunity';
+import tenantIndex from '../view/tenant/index';
+import createTenant from '../view/tenant/create';
 
 
 /**
@@ -40,6 +42,22 @@ export default new Router({
                 title: '添加小区'
             },
             component: createCommunity
+        },
+        {
+            path: '/tenant',
+            name: 'tenantIndex',
+            meta: {
+                title: '添加小区'
+            },
+            component: tenantIndex
+        },
+        {
+            path: '/tenant',
+            name: 'createTenant',
+            meta: {
+                title: '添加小区'
+            },
+            component: createTenant
         }
     ]
 })

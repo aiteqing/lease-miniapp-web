@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="community-item" v-for="community in communityList" :key="community.community_id">
+        <div class="community-item" v-for="community in communityList" :key="community.community_id"
+             @click="gotoTenant(community.community_id,community.community_name)">
             <div class="community-content">
                 <div class="community-name">{{community.community_name}}</div>
                 <div class="community-address">{{community.address}}</div>
@@ -24,6 +25,7 @@
             this.getCommunityList();
         },
         methods: {
+            //获取小区列表
             getCommunityList: function () {
                 var _this = this;
                 getCommunityList({
@@ -42,9 +44,20 @@
                         });
                     })
             },
+            //跳转创建小区页面
             createCommunity: function () {
                 this.$router.push({
                     name: 'createCommunity'
+                })
+            },
+            //    跳转租客列表页面
+            gotoTenant(communityId, communityName) {
+                this.$router.push({
+                    name: 'tenantIndex',
+                    query: {
+                        communityId: communityId,
+                        communityName: communityName
+                    }
                 })
             }
         }
