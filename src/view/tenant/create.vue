@@ -47,8 +47,12 @@
                 placeholder="例：3栋1单元2201 1号房">
         </van-field>
 
-        <van-row class="btns">
-            <van-button round type="info" size="large" @click="submit">保存</van-button>
+        <van-row class="update-btn-wrap" v-if="!!tenantData.tenant_id">
+            <van-button plain type="info" @click="deleteTenant">删除租客</van-button>
+            <van-button type="info" @click="submit">保存</van-button>
+        </van-row>
+        <van-row class="btns" v-else>
+            <van-button round type="info" size="large" @click="submit">新增</van-button>
         </van-row>
 
 
@@ -91,13 +95,15 @@
 
 <script>
     import {formatDate} from "../../utils/formatDate";
-    import {createTenant} from "../../api/tenant";
+    import {createTenant, getTenantDetail, updateTenant, deleteTenant} from "../../api/tenant";
+    import moment from 'moment';
 
     export default {
         name: "create",
         data() {
             return {
                 tenantData: {
+                    tenant_id: this.$route.query.tenantId || '',
                     community_id: this.$route.query.communityId,
                     community_name: this.$route.query.communityName,
                     check_in_date: '',
@@ -136,6 +142,11 @@
                         value: 'TYP_YEAR'
                     }]
                 }
+            }
+        },
+        created() {
+            if (!!this.tenantData.tenant_id) {
+                this.getTenantDetail();
             }
         },
         methods: {
@@ -226,6 +237,16 @@
                     duration: 0
                 })
 
+                if (!!_this.tenantData.tenant_id) {
+                    _this.updateTenant(submitData);
+                } else {
+                    _this.updateTenant(createTenant);
+                }
+
+            },
+            //添加租客
+            createTenant: function (submitData) {
+                var _this = this;
                 createTenant(submitData)
                     .then((res) => {
                         console.log('createTenant res', res);
@@ -258,7 +279,109 @@
                         });
                         console.log('createTenant err', err);
                     })
+            },
+            //更新租客信息
+            updateTenant: function (submitData) {
+                var _this = this;
+                updateTenant(submitData)
+                    .then((res) => {
+                        console.log('updateTenant res', res);
+                        _this.$toast.clear();
+                        if (res.code != 200) {
+                            _this.$notify({
+                                message: res.errMsg,
+                                duration: 2000,
+                                background: '#ff4444'
+                            });
+                            return;
+                        }
 
+                        _this.$toast({
+                            type: 'success',
+                            duration: 1500,       // 持续展示 toast
+                            forbidClick: true, // 禁用背景点击
+                            message: '更新成功',
+                            onOpened: function () {
+                                _this.$router.back()
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        _this.$toast.clear();
+                        _this.$notify({
+                            message: '服务器异常，请稍后再试',
+                            duration: 2000,
+                            background: '#ff4444'
+                        });
+                        console.log('createTenant err', err);
+                    })
+            },
+            // 获取租客详情
+            getTenantDetail: function () {
+                var _this = this;
+                getTenantDetail({
+                    tenant_id: _this.tenantData.tenant_id
+                })
+                    .then((res) => {
+                        if (res.code != 200) {
+                            _this.$notify({
+                                message: res.errMsg,
+                                duration: 2000,
+                                background: '#ff4444'
+                            });
+                            return;
+                        }
+                        res.data.check_in_date = moment(res.data.check_in_date).format('YYYY-MM-DD');
+                        res.data.expiration_date = moment(res.data.expiration_date).format('YYYY-MM-DD');
+                        _this.leaseData.leaseFeeType = _this.leaseData.leaseActions.filter(function (item) {
+                            return item.value == res.data.lease_fee_type
+                        })[0].name;
+                        _this.tenantData = Object.assign(this.tenantData, res.data);
+                    })
+                    .catch((err) => {
+                        console.error('getTenantDetail err', err);
+                    })
+            },
+            //删除租客
+            deleteTenant: function () {
+                var _this = this;
+                _this.$toast.loading({
+                    duration: 0
+                })
+                deleteTenant({
+                    tenant_id: _this.tenantData.tenant_id
+                })
+                    .then((res) => {
+                        console.log('deleteTenant res', res);
+                        _this.$toast.clear();
+                        if (res.code != 200) {
+                            _this.$notify({
+                                message: res.errMsg,
+                                duration: 2000,
+                                background: '#ff4444'
+                            });
+                            return;
+                        }
+
+                        _this.$toast({
+                            type: 'success',
+                            duration: 1500,       // 持续展示 toast
+                            forbidClick: true, // 禁用背景点击
+                            message: '删除成功',
+                            onOpened: function () {
+                                _this.$router.back()
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        _this.$toast.clear();
+                        _this.$notify({
+                            message: '服务器异常，请稍后再试',
+                            duration: 2000,
+                            background: '#ff4444'
+                        });
+                        console.log('createTenant err', err);
+                    })
             }
         }
     }
@@ -273,5 +396,16 @@
     .btns .van-button--large {
         height: 80px;
         line-height: 80px;
+    }
+
+    .update-btn-wrap {
+        margin-top: 60px;
+    }
+
+    .update-btn-wrap .van-button {
+        width: 300px;
+        height: 80px;
+        line-height: 80px;
+        margin: 0 20px;
     }
 </style>

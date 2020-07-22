@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="tenant-item" v-for="tenant in tenantList" :key="tenant.tenant_id">
+        <div class="tenant-item" v-for="tenant in tenantList" :key="tenant.tenant_id" @click="gotoTennat(tenant.tenant_id)">
             <div class="tenant-content">
                 <div class="user-info">
                     <div class="name">{{tenant.tenant_name}}</div>
@@ -29,6 +29,7 @@
             this.getTenantList();
         },
         methods: {
+            //跳转添加租客页面
             addTenant: function () {
                 this.$router.push({
                     name: 'createTenant',
@@ -38,6 +39,7 @@
                     }
                 })
             },
+            //获取租客列表
             getTenantList: function () {
                 var _this = this;
                 getTenantList({
@@ -45,17 +47,26 @@
                     community_id: _this.$route.query.communityId
                 })
                     .then((res) => {
-                        console.log('getTenantList res', res);
                         _this.tenantList = res.data;
                     })
                     .catch((err) => {
-                        console.log('getTenantList err', err);
                         _this.$notify({
                             message: err.errMsg,
                             duration: 2000,
                             background: '#ff4444'
                         });
                     })
+            },
+            //跳转修改租客页面
+            gotoTennat: function (tenantId) {
+                this.$router.push({
+                    name: 'createTenant',
+                    query: {
+                        communityId: this.$route.query.communityId,
+                        communityName: this.$route.query.communityName,
+                        tenantId: tenantId,
+                    }
+                })
             }
         }
     }
