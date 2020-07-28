@@ -50,9 +50,9 @@
         data() {
             return {
                 isLoginType: true,
-                phone: '17521330398',
-                password: '271314',
-                password_confirm: '271314'
+                phone: '',
+                password: '',
+                password_confirm: ''
             }
         },
         created() {

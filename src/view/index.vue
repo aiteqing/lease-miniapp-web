@@ -1,12 +1,15 @@
 <template>
     <div>
-        <div class="community-item" v-for="community in communityList" :key="community.community_id"
-             @click="gotoTenant(community.community_id,community.community_name)">
-            <div class="community-content">
-                <div class="community-name">{{community.community_name}}</div>
-                <div class="community-address">{{community.address}}</div>
+        <div v-if="communityList.length>0">
+            <div class="community-item" v-for="community in communityList" :key="community.community_id"
+                 @click="gotoTenant(community.community_id,community.community_name)">
+                <div class="community-content">
+                    <div class="community-name">{{community.community_name}}</div>
+                    <div class="community-address">{{community.address}}</div>
+                </div>
             </div>
         </div>
+        <div v-else class="no-community">暂无~</div>
         <div class="add-community" @click="createCommunity"><img src="../assets/addIcon.svg"></div>
     </div>
 </template>
@@ -101,5 +104,11 @@
     .add-community img {
         width: 100%;
         height: 100%;
+    }
+
+    .no-community {
+        font-size: 30px;
+        margin-top: 40px;
+        color: #666666;
     }
 </style>

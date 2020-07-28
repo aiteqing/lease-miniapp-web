@@ -1,15 +1,26 @@
 <template>
     <div>
-        <div class="tenant-item" v-for="tenant in tenantList" :key="tenant.tenant_id" @click="gotoTennat(tenant.tenant_id)">
-            <div class="tenant-content">
-                <div class="user-info">
-                    <div class="name">{{tenant.tenant_name}}</div>
-                    <div class="phone">{{tenant.phone}}</div>
-                    <div class="community-name">{{communityName}}</div>
+
+        <div v-if="tenantList.length>0">
+            <div class="tenant-item" v-for="tenant in tenantList" :key="tenant.tenant_id"
+                 @click="gotoTennat(tenant.tenant_id)">
+                <div class="tenant-content">
+                    <div class="user-info">
+                        <div class="name">{{tenant.tenant_name}}</div>
+                        <div class="phone">{{tenant.phone}}</div>
+                        <div class="community-name">{{communityName}}</div>
+                    </div>
+                    <div class="address-wrap">
+                        <div class="address">{{tenant.room_address}}</div>
+                        <div class="rent">￥{{tenant.rent}}</div>
+                    </div>
                 </div>
-                <div class="address">{{tenant.room_address}}</div>
             </div>
         </div>
+        <div v-else class="no-tenant">
+            <div>暂无~</div>
+        </div>
+
         <div class="add-tenant" @click="addTenant"><img src="../../assets/addIcon.svg"></div>
     </div>
 </template>
@@ -102,10 +113,20 @@
         margin-left: 20px;
     }
 
-    .tenant-content .address {
+    .tenant-content .address-wrap {
+        display: flex;
         font-size: 28px;
-        color: #666;
         margin-top: 10px;
+    }
+
+    .address-wrap .address {
+        color: #666;
+    }
+
+    .address-wrap .rent {
+        color: red;
+        font-weight: bold;
+        margin-left: 30px;
     }
 
 
@@ -120,5 +141,11 @@
     .add-tenant img {
         width: 100%;
         height: 100%;
+    }
+
+    .no-tenant {
+        font-size: 30px;
+        margin-top: 40px;
+        color: #666666;
     }
 </style>

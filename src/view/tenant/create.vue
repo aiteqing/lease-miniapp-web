@@ -40,7 +40,11 @@
                 @click="showLeasePicker"
                 placeholder="请选择交租方式">
         </van-field>
-
+        <van-field
+                v-model="tenantData.rent"
+                label="租金"
+                placeholder="请输入租金">
+        </van-field>
         <van-field
                 v-model="tenantData.room_address"
                 label="详细住址"
@@ -111,7 +115,8 @@
                     tenant_name: '',
                     phone: '',
                     lease_fee_type: '',
-                    room_address: ''
+                    room_address: '',
+                    rent: ''
                 },
                 dateData: {
                     isShowDatePicker: false,
@@ -207,6 +212,8 @@
                     errMsg = '截止日期不能为空';
                 } else if (!data.lease_fee_type) {
                     errMsg = '交租方式不能为空';
+                } else if (!data.rent) {
+                    errMsg = '租金不能为空';
                 } else if (!data.room_address) {
                     errMsg = '详细地址不能为空';
                 } else if (!data.user_uid) {
@@ -240,7 +247,7 @@
                 if (!!_this.tenantData.tenant_id) {
                     _this.updateTenant(submitData);
                 } else {
-                    _this.updateTenant(createTenant);
+                    _this.createTenant(submitData);
                 }
 
             },
@@ -345,43 +352,53 @@
             //删除租客
             deleteTenant: function () {
                 var _this = this;
-                _this.$toast.loading({
-                    duration: 0
-                })
-                deleteTenant({
-                    tenant_id: _this.tenantData.tenant_id
-                })
-                    .then((res) => {
-                        console.log('deleteTenant res', res);
-                        _this.$toast.clear();
-                        if (res.code != 200) {
-                            _this.$notify({
-                                message: res.errMsg,
-                                duration: 2000,
-                                background: '#ff4444'
-                            });
-                            return;
-                        }
 
-                        _this.$toast({
-                            type: 'success',
-                            duration: 1500,       // 持续展示 toast
-                            forbidClick: true, // 禁用背景点击
-                            message: '删除成功',
-                            onOpened: function () {
-                                _this.$router.back()
-                            }
-                        });
+                _this.$dialog.confirm({
+                    title: '删除租客',
+                    message: '确认删除租客？',
+                })
+                    .then(() => {
+                        _this.$toast.loading({
+                            duration: 0
+                        })
+                        deleteTenant({
+                            tenant_id: _this.tenantData.tenant_id
+                        })
+                            .then((res) => {
+                                console.log('deleteTenant res', res);
+                                _this.$toast.clear();
+                                if (res.code != 200) {
+                                    _this.$notify({
+                                        message: res.errMsg,
+                                        duration: 2000,
+                                        background: '#ff4444'
+                                    });
+                                    return;
+                                }
+
+                                _this.$toast({
+                                    type: 'success',
+                                    duration: 1500,       // 持续展示 toast
+                                    forbidClick: true, // 禁用背景点击
+                                    message: '删除成功',
+                                    onOpened: function () {
+                                        _this.$router.back()
+                                    }
+                                });
+                            })
+                            .catch((err) => {
+                                _this.$toast.clear();
+                                _this.$notify({
+                                    message: '服务器异常，请稍后再试',
+                                    duration: 2000,
+                                    background: '#ff4444'
+                                });
+                                console.log('createTenant err', err);
+                            })
                     })
-                    .catch((err) => {
-                        _this.$toast.clear();
-                        _this.$notify({
-                            message: '服务器异常，请稍后再试',
-                            duration: 2000,
-                            background: '#ff4444'
-                        });
-                        console.log('createTenant err', err);
-                    })
+                    .catch(() => {
+                        // on cancel
+                    });
             }
         }
     }
